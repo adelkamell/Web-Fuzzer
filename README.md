@@ -1,17 +1,19 @@
-# Mini Web Fuzzer - V1
+# Web Fuzzer - V2
 
-A lightweight directory enumeration tool for discovering hidden web paths and resources.
+A fast, concurrent directory enumeration tool for discovering hidden web paths and resources with multi-threading support and custom wordlist loading.
 
 ## 📌 Overview
 
-This is a minimal web fuzzer that checks for common directory and file paths on a target web server. It's designed to be simple, fast, and easy to understand - perfect for learning the fundamentals of web fuzzing and HTTP probing.
+This is a powerful web fuzzer that scans for common and custom directory paths on target web servers. Built with Go's concurrency model, it efficiently handles large wordlists while maintaining high performance.
 
 ## 🚀 Features
 
-- **Lightweight & Fast**: Uses HTTP HEAD requests to minimize bandwidth usage
-- **Simple Implementation**: Clean code structure ideal for beginners
-- **Extensible Design**: Built with future enhancements in mind
-- **Basic Directory Discovery**: Tests common paths like `/admin`, `/login`, `/config`, etc.
+- **⚡ Concurrent Scanning**: Uses goroutines and channels for parallel processing
+- **📂 Custom Wordlist Support**: Load any wordlist from a file
+- **🎯 Flexible Targeting**: Specify any base URL via command-line flags
+- **🔧 Configurable Threads**: Adjust concurrency level based on your needs
+- **📊 Smart Detection**: Identifies all valid paths (status codes 200-399)
+- **🧹 Efficient**: Uses HTTP HEAD requests to minimize bandwidth
 
 ## 🛠️ Installation
 
@@ -22,57 +24,110 @@ go build
 ```
 
 ### 💻 Usage
+Basic Usage
 ```bash
-./web-fuzzer
+./web-fuzzer -u http://target.com
 ```
 
-### Current Behavior:
+### Advanced Options
+```bash
+./web-fuzzer -u http://target.com -w custom_wordlist.txt -t 50
+```
+### Command Line Flags
 
-Targets: http://example.com
+![Command Line Flags](images/1.png)
 
-Tests these paths: admin, login, config, backup
+Example Wordlist Format
+Create a wordlist.txt file with one path per line:
 
-Outputs: Lists all discovered paths with status code 200
+```text
+admin
+login
+dashboard
+config
+backup
+api
+test
+```
 
-### 📝 Configuration
-Currently, the fuzzer uses a hardcoded target and wordlist. To customize:
+### 📝 How It Works
+- Worker Pool: Creates -t number of goroutines (workers)
 
-Change the base variable to your target URL
+- Job Queue: Sends words from the wordlist to workers via a channel
 
-Modify the words slice with your custom wordlist
+- Concurrent Scanning: Each worker tests paths simultaneously
+
+- Result Collection: Valid paths are collected and displayed
+
+- Efficient Completion: Uses WaitGroups to manage all goroutines properly
 
 ### 🔮 Future Features
-□ Custom wordlist loading from files
-□ Multi-threading support
-□ Support for different HTTP methods (GET, POST)
+□ Support for different HTTP methods (GET, POST, PUT)
 □ Custom headers and cookies
-□ Response filtering and validation
-□ Export results to file formats (JSON, CSV)
+□ Response body analysis
+□ Export results to JSON/CSV
 □ Recursive directory scanning
-□ Status code filtering
+□ Extensions support (e.g., .php, .html, .bak)
+□ Rate limiting and delay options
+□ Proxy support
+□ Colorized output
+□ Progress bar for long scans
 
 ### 🎯 Why Go?
 I chose Go for this project because:
 
-Fast Execution: Go's compiled nature makes it excellent for networking tools
+🚀 Superior Concurrency: Goroutines and channels make implementing parallel scanning trivial
 
-Standard Library Power: The net/http package provides everything needed for HTTP operations without external dependencies
+⚡ Blazing Performance: Compiled language with near C-level speed
 
-Concurrency Support: Built-in goroutines make it easy to add parallel scanning later
+📦 Zero Dependencies: The standard library has everything needed for HTTP operations
 
-Simplicity: Clean syntax makes the code readable and maintainable
+🔄 Scalable: Easy to add more advanced features like rate limiting and proxies
 
-Cross-Platform: Single binary deployment works on any system
+🎯 Type Safety: Strong typing prevents common runtime errors
 
-Performance: Efficient memory management and fast I/O operations
+🌍 Cross-Platform: Compile once, run anywhere with single binary deployment
+
+📈 Memory Efficient: Handles large wordlists without excessive memory usage
+
+🛡️ Built-in Testing: Excellent testing framework for ensuring reliability
+
+### 🚀 Performance Comparison
+
+![Performance Comparison](images/2.png)
 
 ### ⚠️ Legal & Ethical Use
 Important: This tool should only be used on systems you own or have explicit permission to test. Unauthorized access to computer systems is illegal in most jurisdictions.
 
+### Responsible Usage Guidelines:
+✅ Only scan systems you own
+
+✅ Obtain written permission before testing
+
+✅ Respect rate limits and server resources
+
+✅ Use responsibly and ethically
+
+❌ Never use for unauthorized access
+
+❌ Don't overwhelm target servers
+
 ### 🤝 Contributing
-Contributions are welcome! Please feel free to submit issues and pull requests.
+- Contributions are welcome! Here's how you can help:
+
+- Fork the repository
+
+- Create your feature branch (git checkout -b feature/AmazingFeature)
+
+- Commit your changes (git commit -m 'Add some AmazingFeature')
+
+- Push to the branch (git push origin feature/AmazingFeature)
+
+- Open a Pull Request
 
 ### 👤 Author
-- GitHub: @adelkamell
+GitHub: @adelkamell
 
-### Made with **❤️** for the security community
+### Inspired by tools like dirb, gobuster, and ffuf 🫶
+
+### Made with **❤️** for the security community | Version 2.0
