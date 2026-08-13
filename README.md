@@ -214,8 +214,8 @@ Special thanks to security researchers and the open-source community
 
 ### Version History
 
-**V1: Basic directory fuzzer**
+- **V1: Basic directory fuzzer**
 
-**V2: Added concurrency and custom wordlists**
+- **V2: Added concurrency and custom wordlists**
 
-**V3: Added rate limiting, extensions, and enhanced HTTP client**
+- **V3: Added rate limiting, extensions, and enhanced HTTP client**
