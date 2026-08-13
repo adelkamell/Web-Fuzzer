@@ -1,19 +1,26 @@
-# Web Fuzzer - V2
+# Web Fuzzer - V3
 
-A fast, concurrent directory enumeration tool for discovering hidden web paths and resources with multi-threading support and custom wordlist loading.
+A powerful, feature-rich web directory and file fuzzer with rate limiting, extension support, custom headers, and advanced HTTP client configuration.
 
 ## 📌 Overview
 
-This is a powerful web fuzzer that scans for common and custom directory paths on target web servers. Built with Go's concurrency model, it efficiently handles large wordlists while maintaining high performance.
+Web Fuzzer V3 is a sophisticated directory enumeration tool designed for security professionals and developers. It combines high-performance concurrent scanning with enterprise-grade features like rate limiting, extension fuzzing, and custom HTTP configurations.
 
-## 🚀 Features
+## 🚀 Key Features
 
-- **⚡ Concurrent Scanning**: Uses goroutines and channels for parallel processing
-- **📂 Custom Wordlist Support**: Load any wordlist from a file
-- **🎯 Flexible Targeting**: Specify any base URL via command-line flags
-- **🔧 Configurable Threads**: Adjust concurrency level based on your needs
-- **📊 Smart Detection**: Identifies all valid paths (status codes 200-399)
-- **🧹 Efficient**: Uses HTTP HEAD requests to minimize bandwidth
+### 🔥 Advanced Features
+- **🔄 Extension Fuzzing**: Test multiple file extensions (`.php`, `.asp`, `.html`, etc.) in a single scan
+- **⏱️ Rate Limiting**: Configure requests per second to avoid overwhelming targets
+- **🎭 Custom User-Agent**: Bypass basic WAF rules with customizable user agents
+- **📊 Enhanced Results**: Display full URL paths, status codes, and content sizes
+- **⏰ Configurable Timeout**: Set HTTP request timeouts for better control
+- **🚫 Redirect Control**: Prevent following redirects for accurate status detection
+
+### 🧠 Core Capabilities
+- **⚡ Concurrent Scanning**: Efficient goroutine-based parallel processing
+- **📂 Custom Wordlist Support**: Load any wordlist from external files
+- **🔧 Flexible Configuration**: Extensive command-line options for fine-tuning
+- **🎯 Smart Detection**: Identifies valid resources with status codes 200-399
 
 ## 🛠️ Installation
 
@@ -24,20 +31,33 @@ go build
 ```
 
 ### 💻 Usage
-Basic Usage
+Basic Example
 ```bash
-./web-fuzzer -u http://target.com
+./web-fuzzer -u http://target.com -w wordlist.txt
+```
+### Advanced Examples
+Fuzzing with extensions:
+
+```bash
+./web-fuzzer -u http://target.com -w wordlist.txt -x php,asp,html,bak
 ```
 
-### Advanced Options
+### High-performance scanning:
+
 ```bash
-./web-fuzzer -u http://target.com -w custom_wordlist.txt -t 50
+./web-fuzzer -u http://target.com -w wordlist.txt -t 50 -rate 20
+```
+
+### Complete configuration:
+
+```bash
+./web-fuzzer -u http://target.com -w big_wordlist.txt -x php,asp,aspx,jsp -t 30 -rate 15 -timeout 3
 ```
 ### Command Line Flags
 
-![Command Line Flags](images/1.png)
+![](images/3.png)
 
-Example Wordlist Format
+### Wordlist Format
 Create a wordlist.txt file with one path per line:
 
 ```text
@@ -49,29 +69,37 @@ backup
 api
 test
 ```
+When using extensions, the tool will test each path with all specified extensions.
 
 ### 📝 How It Works
-- Worker Pool: Creates -t number of goroutines (workers)
+Job Queue: Creates a queue of path+extension combinations
 
-- Job Queue: Sends words from the wordlist to workers via a channel
+Worker Pool: Spawns -t concurrent goroutines
 
-- Concurrent Scanning: Each worker tests paths simultaneously
+Rate Limiting: Controls request frequency using time.Tick
 
-- Result Collection: Valid paths are collected and displayed
+HTTP Client: Uses configurable client with timeout and redirect control
 
-- Efficient Completion: Uses WaitGroups to manage all goroutines properly
+Result Collection: Captures status codes, content sizes, and full paths
+
+Efficient Completion: Properly manages goroutine lifecycle with WaitGroups
+
+Enhanced V3 Architecture
+```text
+Wordlist → Extension Combinations → Job Queue → Workers (Rate Limited) → HTTP Requests → Results
+```
 
 ### 🔮 Future Features
-□ Support for different HTTP methods (GET, POST, PUT)
-□ Custom headers and cookies
-□ Response body analysis
-□ Export results to JSON/CSV
+□ Custom HTTP headers (Authorization, Cookies, etc.)
+□ Proxy support (HTTP, HTTPS, SOCKS5)
+□ Response body analysis (keywords, content matching)
 □ Recursive directory scanning
-□ Extensions support (e.g., .php, .html, .bak)
-□ Rate limiting and delay options
-□ Proxy support
-□ Colorized output
-□ Progress bar for long scans
+□ Output formats (JSON, CSV, HTML reports)
+□ Interactive mode
+□ Resume interrupted scans
+□ DNS resolution customization
+□ HTTP/2 support
+□ TLS/SSL configuration options
 
 ### 🎯 Why Go?
 I chose Go for this project because:
@@ -90,16 +118,42 @@ I chose Go for this project because:
 
 📈 Memory Efficient: Handles large wordlists without excessive memory usage
 
-🛡️ Built-in Testing: Excellent testing framework for ensuring reliability
+⏱️ Built-in Rate Limiting: Time.Tick and time.Ticker provide elegant rate control
 
-### 🚀 Performance Comparison
+🛡️ Robust HTTP Client: Excellent HTTP client with fine-grained control
 
-![Performance Comparison](images/2.png)
+🔧 Simple Error Handling: Clean error handling patterns
+
+### 🚀 Version Evolution
+
+![](images/4.png)
+
+## 🎓 Use Cases
+### Security Testing
+Discovering hidden administrative panels
+
+Identifying backup files and sensitive resources
+
+Finding old or forgotten web applications
+
+### Development
+Validating URL routing configurations
+
+Testing application security
+
+Auditing web application structure
+
+### Research
+Understanding web application architecture
+
+Studying common directory patterns
+
+Security research and education
 
 ### ⚠️ Legal & Ethical Use
-Important: This tool should only be used on systems you own or have explicit permission to test. Unauthorized access to computer systems is illegal in most jurisdictions.
+**⚠️ IMPORTANT: This tool should only be used on systems you own or have explicit written permission to test. Unauthorized access to computer systems is illegal in most jurisdictions.**
 
-### Responsible Usage Guidelines:
+### Responsible Usage Guidelines
 ✅ Only scan systems you own
 
 ✅ Obtain written permission before testing
@@ -108,26 +162,60 @@ Important: This tool should only be used on systems you own or have explicit per
 
 ✅ Use responsibly and ethically
 
+✅ Configure appropriate delays for public targets
+
 ❌ Never use for unauthorized access
 
 ❌ Don't overwhelm target servers
 
+❌ Avoid scanning production systems without proper authorization
+
 ### 🤝 Contributing
-- Contributions are welcome! Here's how you can help:
+Contributions are welcome! Here's how you can help:
 
-- Fork the repository
+Fork the repository
 
-- Create your feature branch (git checkout -b feature/AmazingFeature)
+Create your feature branch (git checkout -b feature/AmazingFeature)
 
-- Commit your changes (git commit -m 'Add some AmazingFeature')
+Commit your changes (git commit -m 'Add some AmazingFeature')
 
-- Push to the branch (git push origin feature/AmazingFeature)
+Push to the branch (git push origin feature/AmazingFeature)
 
-- Open a Pull Request
+Open a Pull Request
+
+### Development Setup
+```bash
+# Clone the repository
+git clone https://github.com/adelkamell/web-fuzzer.git
+
+# Install dependencies (if any)
+go mod tidy
+
+# Build the project
+go build
+
+# Run tests
+go test -v
+```
 
 ### 👤 Author
-GitHub: @adelkamell
+- Adel Kamell
 
-### Inspired by tools like dirb, gobuster, and ffuf 🫶
+- GitHub: @adelkamell
 
-### Made with **❤️** for the security community | Version 2.0
+### 🙏 Acknowledgments
+Thanks to the Go community for excellent tools and libraries
+
+Inspired by tools like dirb, gobuster, ffuf, and dirsearch
+
+Special thanks to security researchers and the open-source community
+
+### **Made with ❤️ for the security community | Version 3.0**
+
+### Version History
+
+**V1: Basic directory fuzzer**
+
+**V2: Added concurrency and custom wordlists**
+
+**V3: Added rate limiting, extensions, and enhanced HTTP client**
